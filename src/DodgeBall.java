@@ -17,6 +17,9 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	private ArrayList<GOval> BALLS;
 	private ArrayList<GRect> enemies;
 	private GLabel text;
+	private GLabel removedEnemies;
+	private GLabel gameOverText1;
+	private GLabel gameOverText2;
 	private Timer movement;
 	private RandomGenerator rgen;
 	
@@ -28,14 +31,19 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	public static final int WINDOW_WIDTH = 300;
 	
 	private int numTimes  = -1;//track number of time actionsPerformed is called
+	private int enemiesRemoved = 0; // track the number of enemies removed
 	
 	public void run() {
 		rgen = RandomGenerator.getInstance();
 		BALLS = new ArrayList<GOval>();
 		enemies = new ArrayList<GRect>();
 		
-		text = new GLabel(""+enemies.size(), 0, WINDOW_HEIGHT);
+		//label for tracking enemies remaining
+		text = new GLabel("Enemies: " + enemies.size(), 10, WINDOW_HEIGHT);
 		add(text);
+		
+		removedEnemies = new GLabel("Enemies Removed: " + enemiesRemoved, 10, 40);
+		add(removedEnemies);
 		
 		movement = new Timer(MS, this);
 		movement.start();
@@ -50,6 +58,13 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 		}
 		moveAllBALLSOnce();
 		moveAllEnemiesOnce(); //move the enemies
+		
+        text.setLabel("Enemies: " + enemies.size()); //update label
+
+        // Check if enemies exceed limit
+        if (enemies.size() > MAX_ENEMIES) {
+            gameOver();
+        }
 	}
 	
 	public void mousePressed(MouseEvent e) {
@@ -91,6 +106,21 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	private void moveAllBALLSOnce() {
 		for(GOval ball:BALLS) {
 			ball.move(SPEED, 0);
+			
+			//use the measurements to calculate the point just outside the ball on the right side
+	        double checkX = ball.getX() + ball.getWidth() + 1;
+	        double checkY = ball.getY() + ball.getHeight() / 2;
+
+	        //check if an object exists at that point
+	        GObject poorLilGuy = getElementAt(checkX, checkY);
+
+	        //if the object is a GRect (enemy), remove it
+	        if (poorLilGuy instanceof GRect) {
+	        	remove(poorLilGuy); //removes from screen
+	            enemies.remove(poorLilGuy); //removes from enemies list
+	            enemiesRemoved++; //update enemies removed
+	            removedEnemies.setLabel("Enemies Removed: " + enemiesRemoved); //update the label
+	        }
 		}
 	}
 	
@@ -99,6 +129,20 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 		for(GRect box : enemies) {
 			box.move(0, rgen.nextInt(-2, 2));
 		}
+	}
+	
+	//a function that ends the game
+	private void gameOver() {
+		movement.stop(); //stops the timer
+		removeAll(); //clears the screen
+		
+		gameOverText1 = new GLabel("GAME OVER!", WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2);
+		gameOverText2 = new GLabel("You murdered " + enemiesRemoved + " squares!", WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2 + 30);
+        gameOverText1.setFont("SansSerif-bold-18");
+        gameOverText2.setFont("SansSerif-bold-18");
+
+        add(gameOverText1);
+        add(gameOverText2);
 	}
 	
 	public void init() {
