@@ -28,11 +28,18 @@ public class BallLauncher extends GraphicsProgram{
 	}
 	
 	public void mousePressed(MouseEvent e) {
+        //check if any BALLS are still near the starting position (x < 100)
+        for (GOval ball : ovals) {
+            if (ball.getX() < 100) {
+                return; //if a BALL was recently launched, this just ignore the mouse press
+            }
+        }
+		
 		GOval ball = makeBall(SIZE/2, e.getY());
 		add(ball);
 		ovals.add(ball); //adds BALLS to ovals list
 	}
-	
+	//if no BALLS are near the start, continue like normal
 	public GOval makeBall(double x, double y) {
 		GOval temp = new GOval(x-SIZE/2, y-SIZE/2, SIZE, SIZE);
 		temp.setColor(Color.RED);
