@@ -14,7 +14,7 @@ import acm.program.GraphicsProgram;
 import acm.util.RandomGenerator;
 
 public class DodgeBall extends GraphicsProgram implements ActionListener {
-	private ArrayList<GOval> balls;
+	private ArrayList<GOval> BALLS;
 	private ArrayList<GRect> enemies;
 	private GLabel text;
 	private Timer movement;
@@ -27,11 +27,11 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	public static final int WINDOW_HEIGHT = 600;
 	public static final int WINDOW_WIDTH = 300;
 	
-	private int numTimes  = -1;
+	private int numTimes  = -1;//track number of time actionsPerformed is called
 	
 	public void run() {
 		rgen = RandomGenerator.getInstance();
-		balls = new ArrayList<GOval>();
+		BALLS = new ArrayList<GOval>();
 		enemies = new ArrayList<GRect>();
 		
 		text = new GLabel(""+enemies.size(), 0, WINDOW_HEIGHT);
@@ -43,15 +43,17 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		numTimes++;
+		numTimes++; //increment to track number of times called
+		//an if statement that says for every 40th run, add an enemy
 		if(numTimes % 40 == 0) {
 		    addAnEnemy();
 		}
-		moveAllBallsOnce();
+		moveAllBALLSOnce();
+		moveAllEnemiesOnce(); //move the enemies
 	}
 	
 	public void mousePressed(MouseEvent e) {
-		for(GOval b:balls) {
+		for(GOval b:BALLS) {
 			if(b.getX() < SIZE * 2.5) {
 				return;
 			}
@@ -62,7 +64,7 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	private void addABall(double y) {
 		GOval ball = makeBall(SIZE/2, y);
 		add(ball);
-		balls.add(ball);
+		BALLS.add(ball);
 	}
 	
 	public GOval makeBall(double x, double y) {
@@ -86,9 +88,16 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 		return temp;
 	}
 
-	private void moveAllBallsOnce() {
-		for(GOval ball:balls) {
+	private void moveAllBALLSOnce() {
+		for(GOval ball:BALLS) {
 			ball.move(SPEED, 0);
+		}
+	}
+	
+	//similarly to moveAllBALLSOnce, this moves the enemy squares
+	private void moveAllEnemiesOnce() {
+		for(GRect box : enemies) {
+			box.move(0, rgen.nextInt(-2, 2));
 		}
 	}
 	
