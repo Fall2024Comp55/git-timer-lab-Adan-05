@@ -24,7 +24,7 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 	private RandomGenerator rgen;
 	
 	public static final int SIZE = 25;
-	public static final int SPEED = 2;
+	public static final int SPEED = 10;
 	public static final int MS = 50;
 	public static final int MAX_ENEMIES = 10;
 	public static final int WINDOW_HEIGHT = 600;
@@ -42,6 +42,7 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 		text = new GLabel("Enemies: " + enemies.size(), 10, WINDOW_HEIGHT);
 		add(text);
 		
+		//label for tracking enemies killed
 		removedEnemies = new GLabel("Enemies Removed: " + enemiesRemoved, 10, 40);
 		add(removedEnemies);
 		
@@ -105,7 +106,7 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 
 	private void moveAllBALLSOnce() {
 		for(GOval ball:BALLS) {
-			ball.move(SPEED, 0);
+			ball.move(SPEED, 0); //ball speed
 			
 			//use the measurements to calculate the point just outside the ball on the right side
 	        double checkX = ball.getX() + ball.getWidth() + 1;
@@ -137,7 +138,7 @@ public class DodgeBall extends GraphicsProgram implements ActionListener {
 		removeAll(); //clears the screen
 		
 		gameOverText1 = new GLabel("GAME OVER!", WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2);
-		gameOverText2 = new GLabel("You murdered " + enemiesRemoved + " squares!", WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2 + 30);
+		gameOverText2 = new GLabel("You murdered " + enemiesRemoved + " squares!", WINDOW_WIDTH / 6, WINDOW_HEIGHT / 2 + 30);
         gameOverText1.setFont("SansSerif-bold-18");
         gameOverText2.setFont("SansSerif-bold-18");
 
